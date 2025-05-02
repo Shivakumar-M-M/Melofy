@@ -2,17 +2,22 @@ import React, { useEffect, useRef } from 'react';
 import { Route, Routes, useLocation, useParams } from 'react-router-dom';
 import Displayhome from './Displayhome';
 import DisplayAlbum from './DisplayAlbum';
-import { albumsData } from '../assets/assets';
+
+import { useContext } from 'react';
+import { PlayerContext } from '../context/Playercontext';
 
 const Display = () => {
+const {albumsData}=useContext(PlayerContext);
+
+
   const displayRef = useRef();
   const location = useLocation();
 
   const isAlbum=location.pathname.includes("album");
 
-  const albumId=isAlbum?location.pathname.slice(-1):"";
+  const albumId=isAlbum ?  location.pathname.split('/').pop():"";
  
-  const bgColor=albumsData[Number(albumId)].bgColor;
+  const bgColor="#121212";
   useEffect(()=>
   {
     if(isAlbum)
@@ -30,10 +35,13 @@ const Display = () => {
       ref={displayRef}
       className="w-full m-2 px-6 pt-4 rounded bg-[#121212] text-white overflow-auto lg:w-[75%] lg:ml-0"
     >
+      {albumsData.length>0?
       <Routes>
         <Route path="/" element={<Displayhome />} />
-        <Route path="/album/:id" element={<DisplayAlbum />} />
+        <Route path="/album/:id" element={<DisplayAlbum album={albumsData.find((x)=>(x._id==albumId))}/>} />
       </Routes>
+      :null
+}
     </div>
   );
 };
